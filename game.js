@@ -11,10 +11,10 @@ class Example extends Phaser.Scene {
         this.emitter = this.add.particles(0, 0, 'brush', {
             speed: { min: 50, max: 100 }, // Speed of particles
             tint: [0xfacc22, 0xf89800, 0xf83600, 0xff4500], // Colors like fire
-            lifespan: { min: 600, max: 1200 }, // Lifespan of particles
+            lifespan: { min: 600, max: 2200 }, // Lifespan of particles
             angle: { min: -90, max: 90 }, // Adjusted angle for lateral movement
-            scale: { start: 1.5, end: 0 }, // Size of particles (5x bigger than original)
-            gravityY: -50, // Negative gravity to make particles rise slightly
+            scale: { start: 2.5, end: 0 }, // Size of particles (5x bigger than original)
+            gravityY: 0, // Negative gravity to make particles rise slightly
             frequency: 100, // Frequency of particle emission
             maxParticles: 100, // Limit the number of particles
             blendMode: 'ADD', // Blend mode for glowing effect
