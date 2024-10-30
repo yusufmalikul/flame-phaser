@@ -7,7 +7,7 @@ class Example extends Phaser.Scene {
         this.hsv = Phaser.Display.Color.HSVColorWheel(); // Create an HSV color wheel
         this.i = 0;
 
-        // Set the emitter's initial position to the center of the screen
+        // Set up the particle emitter
         this.emitter = this.add.particles(0, 0, 'brush', {
             speed: { min: 50, max: 100 }, // Speed of particles
             tint: [0xfacc22, 0xf89800, 0xf83600, 0xff4500], // Colors like fire
@@ -16,37 +16,35 @@ class Example extends Phaser.Scene {
             scale: { start: 3.5, end: 0 }, // Size of particles (5x bigger than original)
             gravityY: 0, // Negative gravity to make particles rise slightly
             frequency: 100, // Frequency of particle emission
-            maxParticles: 100, // Limit the number of particles
+            maxParticles: 1000, // Limit the number of particles
             blendMode: 'ADD', // Blend mode for glowing effect
         });
 
-        // Set the emitter position to the center of the screen
-        this.emitter.x = this.cameras.main.width / 2;
-        this.emitter.y = this.cameras.main.height / 2;
-
-        this.lastPointerPosition = { x: this.emitter.x, y: this.emitter.y }; // Initialize with emitter position
+        // Initialize last pointer position
+        this.lastPointerPosition = { x: 0, y: 0 };
 
         // Enable input events
         this.input.on('pointermove', (pointer) => {
-            // Update emitter position to mouse position
-            this.emitter.x = pointer.x;
-            this.emitter.y = pointer.y;
+            // Emit particles at the pointer position
+            if (this.emitter.active) { // Emit only if the emitter is active
+                const dx = pointer.x - this.lastPointerPosition.x;
+                const dy = pointer.y - this.lastPointerPosition.y;
 
-            // Calculate velocity based on the difference from the last position
-            const dx = pointer.x - this.lastPointerPosition.x;
-            const dy = pointer.y - this.lastPointerPosition.y;
-
-            // Update particle velocity based on mouse movement
-            this.emitter.setVelocityX(dx * 0.5); // Adjust the multiplier to control trail length
-            this.emitter.setVelocityY(dy * 0.5); // Adjust the multiplier to control trail length
-
-            // Update last pointer position
-            this.lastPointerPosition.x = pointer.x;
-            this.lastPointerPosition.y = pointer.y;
+                // Emit particles based on mouse movement
+                if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    this.emitter.emitParticle(5, pointer.x, pointer.y); // Emit particles at the pointer's position
+                    this.lastPointerPosition.x = pointer.x;
+                    this.lastPointerPosition.y = pointer.y;
+                }
+            }
         });
 
         // Start emitting particles on mouse click
-        this.input.on('pointerdown', () => {
+        this.input.on('pointerdown', (pointer) => {
+            this.emitter.x = pointer.x; // Set emitter position to mouse click position
+            this.emitter.y = pointer.y;
+            this.lastPointerPosition.x = pointer.x; // Update last pointer position
+            this.lastPointerPosition.y = pointer.y;
             this.emitter.start(); // Start emitting particles
         });
 
