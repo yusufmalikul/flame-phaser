@@ -7,25 +7,42 @@ class Example extends Phaser.Scene {
         this.hsv = Phaser.Display.Color.HSVColorWheel(); // Create an HSV color wheel
         this.i = 0;
 
-        // Create the particle emitter with a very long lifespan and set the scale to 5
+        // Create a particle emitter for fire effect
         this.emitter = this.add.particles(0, 0, 'brush', {
-            speed: 0,                  // Set speed to 0 to stop particles from moving
-            tint: this.hsv[0].color,
-            gravityY: 0,              // No gravity effect
-            frequency: 100,            // Frequency of particle emission
-            maxParticles: 100,         // Limit the number of particles
-            scale: { start: 5, end: 5 } // Set scale to make particles 5x bigger
+            speed: { min: 50, max: 100 }, // Speed of particles
+            tint: [0xfacc22, 0xf89800, 0xf83600, 0xff4500], // Colors like fire
+            lifespan: { min: 600, max: 1200 }, // Lifespan of particles
+            angle: { min: -90, max: 90 }, // Adjusted angle for lateral movement
+            scale: { start: 1.5, end: 0 }, // Size of particles (5x bigger than original)
+            gravityY: -50, // Negative gravity to make particles rise slightly
+            frequency: 100, // Frequency of particle emission
+            maxParticles: 100, // Limit the number of particles
+            blendMode: 'ADD', // Blend mode for glowing effect
         });
+
+        this.lastPointerPosition = { x: 0, y: 0 }; // Store the last mouse position
 
         // Enable input events
         this.input.on('pointermove', (pointer) => {
             // Update emitter position to mouse position
             this.emitter.x = pointer.x;
             this.emitter.y = pointer.y;
+
+            // Calculate velocity based on the difference from the last position
+            const dx = pointer.x - this.lastPointerPosition.x;
+            const dy = pointer.y - this.lastPointerPosition.y;
+
+            // Update particle velocity based on mouse movement
+            this.emitter.setVelocityX(dx * 0.5); // Adjust the multiplier to control trail length
+            this.emitter.setVelocityY(dy * 0.5); // Adjust the multiplier to control trail length
+
+            // Update last pointer position
+            this.lastPointerPosition.x = pointer.x;
+            this.lastPointerPosition.y = pointer.y;
         });
 
         // Start emitting particles on mouse click
-        this.input.on('pointerdown', (pointer) => {
+        this.input.on('pointerdown', () => {
             this.emitter.start(); // Start emitting particles
         });
 
@@ -42,6 +59,7 @@ class Example extends Phaser.Scene {
             this.i = 0;
         }
 
+        // Cycle through colors for more dynamic fire effect
         this.emitter.particleTint = this.hsv[this.i].color; // Cycle through colors
     }
 }
@@ -58,5 +76,10 @@ const config = {
         autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game
     }
 };
+
+// Resize the game on window resize
+window.addEventListener('resize', () => {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+});
 
 const game = new Phaser.Game(config);
