@@ -20,9 +20,6 @@ class Example extends Phaser.Scene {
             blendMode: 'ADD', // Blend mode for glowing effect
         });
 
-        // Initialize last pointer position
-        this.lastPointerPosition = { x: this.emitter.x, y: this.emitter.y };
-
         this.input.on('pointermove', (pointer) => {
             this.emitter.emitParticle(5, pointer.x, pointer.y)
         });
