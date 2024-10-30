@@ -7,7 +7,7 @@ class Example extends Phaser.Scene {
         this.hsv = Phaser.Display.Color.HSVColorWheel(); // Create an HSV color wheel
         this.i = 0;
 
-        // Create a particle emitter for fire effect
+        // Set the emitter's initial position to the center of the screen
         this.emitter = this.add.particles(0, 0, 'brush', {
             speed: { min: 50, max: 100 }, // Speed of particles
             tint: [0xfacc22, 0xf89800, 0xf83600, 0xff4500], // Colors like fire
@@ -20,7 +20,11 @@ class Example extends Phaser.Scene {
             blendMode: 'ADD', // Blend mode for glowing effect
         });
 
-        this.lastPointerPosition = { x: 0, y: 0 }; // Store the last mouse position
+        // Set the emitter position to the center of the screen
+        this.emitter.x = this.cameras.main.width / 2;
+        this.emitter.y = this.cameras.main.height / 2;
+
+        this.lastPointerPosition = { x: this.emitter.x, y: this.emitter.y }; // Initialize with emitter position
 
         // Enable input events
         this.input.on('pointermove', (pointer) => {
