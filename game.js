@@ -7,13 +7,14 @@ class Example extends Phaser.Scene {
         this.hsv = Phaser.Display.Color.HSVColorWheel(); // Create an HSV color wheel
         this.i = 0;
 
-        // Create the particle emitter with a very long lifespan
+        // Create the particle emitter with a very long lifespan and set the scale to 5
         this.emitter = this.add.particles(0, 0, 'brush', {
             speed: 0,                  // Set speed to 0 to stop particles from moving
             tint: this.hsv[0].color,
             gravityY: 0,              // No gravity effect
             frequency: 100,            // Frequency of particle emission
             maxParticles: 100,         // Limit the number of particles
+            scale: { start: 5, end: 5 } // Set scale to make particles 5x bigger
         });
 
         // Enable input events
@@ -32,7 +33,6 @@ class Example extends Phaser.Scene {
         this.input.on('pointerup', () => {
             this.emitter.stop(); // Stop emitting particles
         });
-
     }
 
     update() {
@@ -48,13 +48,13 @@ class Example extends Phaser.Scene {
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: window.innerWidth,  // Set width to the window's width
+    height: window.innerHeight, // Set height to the window's height
     backgroundColor: '#000',
     parent: 'phaser-example',
     scene: Example,
     scale: {
-        mode: Phaser.Scale.FIT,   // Fit to the screen
+        mode: Phaser.Scale.FIT,   // Fit to the screen without going fullscreen
         autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game
     }
 };
