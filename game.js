@@ -10,7 +10,7 @@ class Example extends Phaser.Scene {
         // Set up the particle emitter
         this.emitter = this.add.particles(0, 0, 'brush', {
             speed: { min: 50, max: 100 }, // Speed of particles
-            tint: [0xfacc22, 0xf89800, 0xf83600, 0xff4500], // Colors like fire
+            tint: () => this.hsv[Phaser.Math.Between(0, 359)].color, // Random color from HSV wheel
             lifespan: { min: 600, max: 2200 }, // Lifespan of particles
             angle: { min: -90, max: 90 }, // Adjusted angle for lateral movement
             scale: { start: 2.5, end: 0 }, // Size of particles (5x bigger than original)
@@ -20,8 +20,9 @@ class Example extends Phaser.Scene {
             blendMode: 'ADD', // Blend mode for glowing effect
         });
 
+        // Emit particles when the pointer is moved
         this.input.on('pointermove', (pointer) => {
-            this.emitter.emitParticle(5, pointer.x, pointer.y)
+            this.emitter.emitParticle(5, pointer.x, pointer.y);
         });
 
         // Stop emitting particles on mouse up
@@ -31,14 +32,12 @@ class Example extends Phaser.Scene {
     }
 
     update() {
-        this.i++;
+        this.i = (this.i + 1) % 360; // Cycle through colors
 
-        if (this.i === 360) {
-            this.i = 0;
-        }
-
-        // Cycle through colors for more dynamic fire effect
-        this.emitter.particleTint = this.hsv[this.i].color; // Cycle through colors
+        // Update all particles to follow the HSV color wheel dynamically
+        this.emitter.forEachAlive((particle) => {
+            particle.tint = this.hsv[this.i].color;
+        });
     }
 }
 
